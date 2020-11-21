@@ -1,4 +1,27 @@
-class Product {
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const productSchema = new Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  imageUrl: {
+    type: String,
+    required: true,
+  },
+});
+
+module.exports = mongoose.model('Product', productSchema);
+
+// class Product {
 //   constructor(_id, title, price, description, imageUrl, userID) {
 //     this.title = title;
 //     this.price = price;
@@ -58,6 +81,6 @@ class Product {
 //     .then(results => {})
 //     .catch(error => {console.log(error)})
 //   }
-}
+// }
 
-module.exports = Product;
+// module.exports = Product;

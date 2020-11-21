@@ -18,14 +18,14 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use((req, res, next) => {
-  User.fetchUser("5fb1c6a82eebf91364e82c55")
-    .then((user) => {
-      req.user = new User(user._id, user.username, user.email, user.cart);
-      next();
-    })
-    .catch((err) => console.log(err));
-});
+// app.use((req, res, next) => {
+//   User.fetchUser("5fb1c6a82eebf91364e82c55")
+//     .then((user) => {
+//       req.user = new User(user._id, user.username, user.email, user.cart);
+//       next();
+//     })
+//     .catch((err) => console.log(err));
+// });
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
@@ -34,7 +34,7 @@ app.use(errorController.get404);
 
 mongoose
   .connect(
-    "mongodb+srv://ramadhan:ramadhan@rest.c8dmh.mongodb.net/stage_1?retryWrites=true&w=majority",
+    "mongodb+srv://ramadhan:ramadhan@rest.c8dmh.mongodb.net/stage_2?retryWrites=true&w=majority",
     {useNewUrlParser: true, useUnifiedTopology: true}
   )
   .then((result) => {
