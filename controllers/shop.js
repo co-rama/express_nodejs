@@ -1,12 +1,14 @@
 const Product = require("../models/product");
 
 exports.getProducts = (req, res, next) => {
+  console.log(req.get('Cookie'));
   Product.find()
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
         pageTitle: "All Products",
         path: "/products",
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -22,6 +24,7 @@ exports.getProduct = (req, res, next) => {
         product: product,
         pageTitle: product.title,
         path: "/products",
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -34,6 +37,7 @@ exports.getIndex = (req, res, next) => {
         prods: products,
         pageTitle: "Shop",
         path: "/",
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -43,15 +47,15 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   req.user
-    .populate('cart.items.productId')
+    .populate("cart.items.productId")
     .execPopulate()
     .then((user) => {
-      console.log(user.cart.items);
       const cart = user.cart.items;
       res.render("shop/cart", {
         path: "/cart",
         pageTitle: "Your Cart",
         products: cart,
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -94,7 +98,8 @@ exports.postCart = (req, res, next) => {
 //       res.render('shop/orders', {
 //         path: '/orders',
 //         pageTitle: 'Your Orders',
-//         orders: orders
+//         orders: orders,
+//         isAuthenticated: req.isLoggedIn
 //       });
 //     })
 //     .catch(err => console.log(err));
