@@ -1,11 +1,16 @@
 const path = require("path");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const express = require("express");
 const bodyParser = require("body-parser");
+const session = require("express-session");
+const mongoose = require("mongoose");
+const mongoDbStore = require("connect-mongodb-session")(session);
 
 const errorController = require("./controllers/error");
-const mongoose = require("mongoose");
 const User = require("./models/user");
+
+const MONGO_URI =
+  "mongodb+srv://ramadhan:ramadhan@rest.c8dmh.mongodb.net/stage_2?retryWrites=true&w=majority";
 
 const app = express();
 
@@ -20,8 +25,24 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+const store = new mongoDbStore({
+  uri: MONGO_URI,
+  collection: "sessions",
+});
+app.use(
+  session({
+    secret: "callback wizard",
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
+);
+
 app.use((req, res, next) => {
-  User.findById("5fb8dc26f31956646dc48b3f")
+  if(!req.session.user){
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
@@ -36,10 +57,7 @@ app.use("/auth", authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect(
-    "mongodb+srv://ramadhan:ramadhan@rest.c8dmh.mongodb.net/stage_2?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
     User.findOne().then((foundUser) => {
       if (!foundUser) {
