@@ -17,9 +17,14 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
+  userID: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
 });
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.model("Product", productSchema);
 
 // class Product {
 //   constructor(_id, title, price, description, imageUrl, userID) {
