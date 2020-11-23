@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const mongoDbStore = require("connect-mongodb-session")(session);
+const csrf = require('csurf');
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -29,6 +30,7 @@ const store = new mongoDbStore({
   uri: MONGO_URI,
   collection: "sessions",
 });
+const csrfProtection = csrf();
 app.use(
   session({
     secret: "callback wizard",
@@ -37,6 +39,7 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
   if(!req.session.user){
@@ -49,6 +52,12 @@ app.use((req, res, next) => {
     })
     .catch((err) => console.log(err));
 });
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken()
+  next();
+})
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
