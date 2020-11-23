@@ -59,18 +59,18 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
-    User.findOne().then((foundUser) => {
-      if (!foundUser) {
-        const user = new User({
-          name: "Corama",
-          email: "coramayunus@gmail.com",
-          cart: {
-            items: [],
-          },
-        });
-        user.save();
-      }
-    });
+    // User.findOne().then((foundUser) => {
+    //   if (!foundUser) {
+    //     const user = new User({
+    //       name: "Corama",
+    //       email: "coramayunus@gmail.com",
+    //       cart: {
+    //         items: [],
+    //       },
+    //     });
+    //     user.save();
+    //   }
+    // });
     app.listen(3000);
     console.log("Connected");
   })
