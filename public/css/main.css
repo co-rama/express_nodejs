@@ -79,9 +79,9 @@ form {
 }
 
 .mobile-nav {
-  width: 30rem;
+  width: 20rem;
   height: 100vh;
-  max-width: 90%;
+  max-width: 80%;
   position: fixed;
   left: 0;
   top: 0;
