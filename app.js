@@ -6,12 +6,13 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const mongoDbStore = require("connect-mongodb-session")(session);
 const csrf = require('csurf');
+require('dotenv').config();
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
-const MONGO_URI =
-  "mongodb+srv://ramadhan:ramadhan@rest.c8dmh.mongodb.net/stage_2?retryWrites=true&w=majority";
+const MONGO_URI = process.env.MONGODB_URI;
+const PORT = process.env.PORT;
 
 const app = express();
 
@@ -80,7 +81,7 @@ mongoose
     //     user.save();
     //   }
     // });
-    app.listen(3000);
+    app.listen(PORT);
     console.log("Connected");
   })
   .catch((err) => {
