@@ -1,6 +1,19 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const { use } = require("../routes/shop");
+const nodemailer = require("nodemailer");
+const sendgridTransport = require("nodemailer-sendgrid-transport");
+
+const companyMail = "smartfleekmarket@gmail.com";
+const accessor = "";
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: companyMail,
+    pass: accessor,
+  },
+});
 
 exports.getLogin = (req, res, next) => {
   // const isLoggedIn = req.cookies['isLoggedIn'];
@@ -72,6 +85,14 @@ exports.postSignup = (req, res, next) => {
         })
         .then((result) => {
           res.redirect("/auth/login");
+          transporter
+            .sendMail({
+              from: companyMail,
+              to: email,
+              subject: "SIGNUP SUCCESS",
+              text: "You successfully signed up to Smartfleek",
+            })
+            .catch((err) => {});
         })
         .catch((err) => console.log(err.message));
     })
