@@ -1,17 +1,19 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-const { use } = require("../routes/shop");
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
+const crypto = require("crypto");
+require("dotenv").config();
 
-const companyMail = "smartfleekmarket@gmail.com";
-const accessor = "";
+const companyMail = process.env.EMAIL;
+const accessor = process.env.PASSWORD;
+const URL = process.env.URL;
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: companyMail,
-    pass: accessor,
+    user: companyMail.trim(),
+    pass: accessor.trim(),
   },
 });
 
@@ -90,9 +92,10 @@ exports.postSignup = (req, res, next) => {
               from: companyMail,
               to: email,
               subject: "SIGNUP SUCCESS",
-              text: "You successfully signed up to Smartfleek",
+              html: "<h3>You successfully signed up to Smartfleek</h3>",
             })
-            .catch((err) => {});
+            .then((result) => console.log(result.response))
+            .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err.message));
     })
@@ -105,6 +108,47 @@ exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "SignUp",
-    isAuthenticated: isLoggedIn,
+  });
+};
+
+exports.getReset = (req, res, next) => {
+  res.render("auth/reset", {
+    path: "/reset",
+    pageTitle: "Reset",
+  });
+};
+
+exports.postReset = (req, res, next) => {
+  crypto.randomBytes(256, (err, buffer) => {
+    if (err) {
+      res.redirect("../login");
+      return console.log(err);
+    }
+    const token = buffer.toString("hex");
+    User.findOne({ email: req.body.email })
+      .then((user) => {
+        if (!user) {
+          return res.redirect("/auth/reset");
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 360000;
+        return user.save();
+      })
+      .then((result) => {
+        res.redirect("/");
+        transporter
+          .sendMail({
+            from: companyMail,
+            to: req.body.email,
+            subject: "PASSWORD RESET",
+            html: `
+          <h3>You requested a password reset, if NOT then ignore this email!</h3>
+          <p>Click this<a href="${URL}/auth/reset/${token}"> link </a>to set a new password</p>
+        `,
+          })
+          .then((info) => console.log(info.response))
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   });
 };

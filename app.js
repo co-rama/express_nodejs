@@ -30,8 +30,9 @@ app.use(express.static(path.join(__dirname, "public")));
 const store = new mongoDbStore({
   uri: MONGO_URI,
   collection: "sessions",
-});
+}, err => { if(err) console.log(err)});
 const csrfProtection = csrf();
+
 app.use(
   session({
     secret: "callback wizard",

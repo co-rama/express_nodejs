@@ -7,20 +7,13 @@
     <%- include('../includes/navigation.ejs') %>
 
     <main>
-        <form class="login-form" action="/auth/login" method="POST">
+        <form class="login-form" action="/auth/reset" method="POST">
             <div class="form-control">
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email">
             </div>
-            <div class="form-control">
-                <label for="password">Password</label>
-                <input type="password" name="password">
-            </div>
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit">login</button>
+            <button class="btn" type="submit">reset password</button>
         </form>
-        <div class="centered">
-            <a href="/auth/reset" style="text-decoration: none; color:cornflowerblue">Reset Password</a>
-        </div>
     </main>
     <%- include('../includes/end.ejs') %>
