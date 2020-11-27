@@ -89,7 +89,7 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find({ userID: 9 })
+  Product.find({ userID: req.user })
     //   .select('')
     //   .populate('')
     .then((products) => {

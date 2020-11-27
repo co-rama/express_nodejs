@@ -1,5 +1,10 @@
 const Product = require("../models/product");
 
+const someError = (err) => {
+  const error = new Error(err);
+  // error.httpStatusCode(500);
+  return error;
+};
 exports.getProducts = (req, res, next) => {
   Product.find()
     .then((products) => {
@@ -10,7 +15,7 @@ exports.getProducts = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      next(someError(err));
     });
 };
 
@@ -24,7 +29,9 @@ exports.getProduct = (req, res, next) => {
         path: "/products",
       });
     })
-    .catch((err) => {console.log(err)});
+    .catch((err) => {
+      next(someError(err));
+    });
 };
 
 exports.getIndex = (req, res, next) => {
@@ -38,7 +45,7 @@ exports.getIndex = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      next(someError(err));
     });
 };
 
@@ -54,7 +61,9 @@ exports.getCart = (req, res, next) => {
         products: cart,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      next(someError(err));
+    });
 };
 
 exports.postCart = (req, res, next) => {
@@ -66,7 +75,9 @@ exports.postCart = (req, res, next) => {
     .then((results) => {
       res.redirect("/cart");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      next(someError(err));
+    });
 };
 
 // exports.postCartDeleteProduct = (req, res, next) => {
@@ -76,7 +87,9 @@ exports.postCart = (req, res, next) => {
 //     .then((result) => {
 //       res.redirect("/cart");
 //     })
-//     .catch((err) => console.log(err));
+//     .catch((err) => {
+//       next(someError(err));
+//      });
 // };
 
 // exports.postOrder = (req, res, next) => {
@@ -84,7 +97,9 @@ exports.postCart = (req, res, next) => {
 //     .then(results => {
 //       res.redirect('/orders');
 //     })
-//     .catch(err => console.log(err));
+//     .catch((err) => {
+//       next(someError(err));
+//      });
 // };
 
 // exports.getOrders = (req, res, next) => {
@@ -99,5 +114,7 @@ exports.postCart = (req, res, next) => {
 //         isAuthenticated: isLoggedIn
 //       });
 //     })
-//     .catch(err => console.log(err));
+//     .catch((err) => {
+//       next(someError(err));
+//      });
 // };
