@@ -1,5 +1,10 @@
 const Product = require("../models/product");
 
+const someError = (err) => {
+  const error = new Error(err);
+  // error.httpStatusCode(500);
+  return error;
+};
 exports.getAddProduct = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   res.render("admin/edit-product", {
@@ -27,7 +32,9 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect("/admin/products");
     })
     .catch((err) => {
-      console.log(err);
+      // console.log(err);
+      // res.redirect('/500');
+      next(someError(err));
     });
 };
 
@@ -50,7 +57,10 @@ exports.getEditProduct = (req, res, next) => {
         product: product,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      // console.log(err);
+      next(someError(err));
+    });
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -69,14 +79,17 @@ exports.postEditProduct = (req, res, next) => {
       return product.save();
     })
     .then((result) => {
-      console.log("UPDATED PRODUCT!");
+      // console.log("UPDATED PRODUCT!");
       res.redirect("/admin/products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      // console.log(err);
+      next(someError(err));
+    });
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find({ userID: req.user })
+  Product.find({ userID: 9 })
     //   .select('')
     //   .populate('')
     .then((products) => {
@@ -86,7 +99,9 @@ exports.getProducts = (req, res, next) => {
         path: "/admin/products",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      next(someError(err));
+    });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -96,5 +111,9 @@ exports.postDeleteProduct = (req, res, next) => {
       console.log("DESTROYED PRODUCT");
       res.redirect("/admin/products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      // console.log(err);
+      // res.redirect("/500");
+      next(someError(err));
+    });
 };

@@ -5,8 +5,8 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const mongoDbStore = require("connect-mongodb-session")(session);
-const csrf = require('csurf');
-require('dotenv').config();
+const csrf = require("csurf");
+require("dotenv").config();
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -27,10 +27,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-const store = new mongoDbStore({
-  uri: MONGO_URI,
-  collection: "sessions",
-}, err => { if(err) console.log(err)});
+const store = new mongoDbStore(
+  {
+    uri: MONGO_URI,
+    collection: "sessions",
+  },
+  (err) => {
+    if (err) console.log(err);
+  }
+);
 const csrfProtection = csrf();
 
 app.use(
@@ -44,28 +49,39 @@ app.use(
 app.use(csrfProtection);
 
 app.use((req, res, next) => {
-  if(!req.session.user){
+  if (!req.session.user) {
     return next();
   }
   User.findById(req.session.user._id)
     .then((user) => {
+      if (!user) {
+        next();
+      }
       req.user = user;
       next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      throw new Error(err);
+    });
 });
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken()
+  res.locals.csrfToken = req.csrfToken();
   next();
-})
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use("/auth", authRoutes);
 
+app.get("/500", errorController.get500);
+
 app.use(errorController.get404);
+
+app.use((error, req, res, next) => {
+  res.redirect("/500");
+});
 
 mongoose
   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
