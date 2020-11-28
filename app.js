@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const mongoose = require("mongoose");
+const multer = require("multer");
 const mongoDbStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 require("dotenv").config();
@@ -23,10 +24,6 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
-
 const store = new mongoDbStore(
   {
     uri: MONGO_URI,
@@ -37,6 +34,26 @@ const store = new mongoDbStore(
   }
 );
 const csrfProtection = csrf();
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + "-" + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if(file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+   return cb(null, true);
+  }
+  cb(null, false);
+}
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
+app.use(multer({ storage : fileStorage, fileFilter : fileFilter }).single("image"));
 
 app.use(
   session({
@@ -47,7 +64,6 @@ app.use(
   })
 );
 app.use(csrfProtection);
-
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
