@@ -56,7 +56,6 @@ exports.getCart = (req, res, next) => {
     .execPopulate()
     .then((user) => {
       const cart = user.cart.items;
-      console.log(cart);
       res.render("shop/cart", {
         path: "/cart",
         pageTitle: "Your Cart",
@@ -84,7 +83,6 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  console.log(prodId);
   req.user
     .removeCart(prodId)
     .then((result) => {
@@ -93,7 +91,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
     .catch((err) => {
       // next(someError(err));
       console.log(err);
-     });
+    });
 };
 
 exports.postOrder = (req, res, next) => {
@@ -102,38 +100,38 @@ exports.postOrder = (req, res, next) => {
     .execPopulate()
     .then((userData) => {
       const products = userData.cart.items.map((i) => {
-        return { quantity: i.quantity, product: { ...i.productId._doc }};
+        return { quantity: i.quantity, product: { ...i.productId._doc } };
       });
       const order = new Order({
-        user : {
-          email : req.user.email,
-          userID : req.user,
+        user: {
+          email: req.user.email,
+          userID: req.user,
         },
-        products : products
-      })
+        products: products,
+      });
       return order.save();
     })
-    .then(result => {
+    .then((result) => {
       return req.user.clearCart();
     })
-    .then(result => {
-      res.redirect('/orders');
+    .then((result) => {
+      res.redirect("/orders");
     })
-    .catch(error => someError(error));
+    .catch((error) => someError(error));
 };
 
 exports.getOrders = (req, res, next) => {
- const isLoggedIn = req.session.isLoggedIn;
- req.user.find({})
-    .then(orders => {
-      res.render('shop/orders', {
-        path: '/orders',
-        pageTitle: 'Your Orders',
+  const isLoggedIn = req.session.isLoggedIn;
+  Order.find({ "user.userID": req.user._id })
+    .then((orders) => {
+      res.render("shop/orders", {
+        path: "/orders",
+        pageTitle: "Your Orders",
         orders: orders,
-        isAuthenticated: isLoggedIn
+        isAuthenticated: isLoggedIn,
       });
     })
     .catch((err) => {
       next(someError(err));
-     });
+    });
 };
