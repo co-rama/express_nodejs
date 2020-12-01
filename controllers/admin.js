@@ -115,16 +115,18 @@ exports.getProducts = (req, res, next) => {
     });
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
+exports.deleteProduct = (req, res, next) => {
+  const prodId = req.params.productId;
   Product.deleteOne({ _id: prodId, userID: req.user })
     .then((result) => {
       // console.log("DESTROYED PRODUCT");
-      res.redirect("/admin/products");
+      // res.redirect("/admin/products");
+      res.status(200).json({message : 'DELETE SUCCEDED'});
     })
     .catch((err) => {
       // console.log(err);
       // res.redirect("/500");
-      next(someError(err));
+      // next(someError(err));
+      res.status(500).json({message : 'DELETE FAILED'})
     });
 };
