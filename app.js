@@ -7,14 +7,15 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const mongoDbStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
-require("dotenv").config();
+const compression = require("compression");
+// require("dotenv").config();
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
 // const MONGO_URI = process.env.MONGODB_URI;
-const MONGO_URI = 'MONGODB_URI=mongodb+srv://ramadhan:ramadhan@rest.c8dmh.mongodb.net/stage_2?retryWrites=true&w=majority';
-const PORT = process.env.PORT;
+const MONGO_URI = `MONGODB_URI=mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@rest.c8dmh.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
@@ -45,18 +46,24 @@ const fileStorage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  if(file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
-   return cb(null, true);
+  if (
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/png"
+  ) {
+    return cb(null, true);
   }
   cb(null, false);
-}
+};
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use('/images', express.static(path.join(__dirname, "images")));
-app.use(multer({ storage : fileStorage, fileFilter : fileFilter }).single("image"));
-
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
+app.use(compression());
 app.use(
   session({
     secret: "callback wizard",
