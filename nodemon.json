@@ -3,6 +3,9 @@
         "MONGO_USER": "ramadhan",
         "MONGO_PASSWORD": "ramadhan",
         "MONGO_DEFAULT_DATABASE": "stage_2",
-        "STRIPE_KEY": "sk_test_T8OE02SHDZWLwk4TYtrWlsat"
+        "STRIPE_KEY": "sk_test_T8OE02SHDZWLwk4TYtrWlsat",
+        "EMAIL":"smartfleekmarket@gmail.com",
+        "PASSWORD":"marketfleek2020",
+        "URL":"http://localhost:3000"
     }
 }

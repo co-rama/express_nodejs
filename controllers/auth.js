@@ -4,7 +4,6 @@ const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 const crypto = require("crypto");
 const user = require("../models/user");
-const { reset } = require("nodemon");
 require("dotenv").config();
 
 const companyMail = process.env.EMAIL;
