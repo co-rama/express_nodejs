@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "Complete Full Node APP",
   "main": "app.js",
+  "engines": {
+    "node": "14.9.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js",
+    "start": "node app.js",
+    "start:dev": "nodemon app.js",
     "start-server": "node app.js"
   },
   "author": "Corama Yunus",

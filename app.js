@@ -12,7 +12,8 @@ require("dotenv").config();
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
-const MONGO_URI = process.env.MONGODB_URI;
+// const MONGO_URI = process.env.MONGODB_URI;
+const MONGO_URI = 'MONGODB_URI=mongodb+srv://ramadhan:ramadhan@rest.c8dmh.mongodb.net/stage_2?retryWrites=true&w=majority';
 const PORT = process.env.PORT;
 
 const app = express();
