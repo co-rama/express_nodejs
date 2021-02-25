@@ -59,7 +59,7 @@ app.use(compression());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 );
